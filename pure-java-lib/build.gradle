@@ -12,22 +12,24 @@ import static org.gradle.api.internal.artifacts.ArtifactAttributes.ARTIFACT_FORM
 apply plugin: 'java-library'
 apply plugin: 'idea'
 
+configurations {
+    aar {
+        attributes {
+            attribute(ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
+        }
+
+        sourceSets.main.compileClasspath += it
+    }
+}
+
+// Put our custom dependencies onto IDEA's PROVIDED scope
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.aar]
+    }
+}
 
 dependencies {
-    /*
-      Android Jar
-     */
-    def targetSdkVersion = 26
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    def sdkDir = properties.getProperty('sdk.dir')
-
-    compileOnly files("${sdkDir}/platforms/android-${targetSdkVersion}/android.jar")
-
-
-    /*
-      Aars
-     */
     def explodedAarType = ArtifactType.EXPLODED_AAR.getType()
     registerTransform {
         from.attribute(ARTIFACT_FORMAT, AndroidArtifacts.TYPE_AAR)
@@ -47,33 +49,26 @@ dependencies {
         artifactTransform(ClassesJarArtifactTransform)
     }
 
-    configurations {
-        aar {
-            attributes {
-                attribute(ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
-            }
-        }
-    }
 
-    // Put our custom dependencies onto IDEA's PROVIDED scope
-    idea {
-        module {
-            scopes.PROVIDED.plus += [configurations.aar]
-        }
-    }
+    /*
+      Android Jar
+     */
+    def targetSdkVersion = 26
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def sdkDir = properties.getProperty('sdk.dir')
 
+    compileOnly files("${sdkDir}/platforms/android-${targetSdkVersion}/android.jar")
+
+
+    /*
+      Aars
+     */
     def SUPPORT_LIBS_VERSION = '27.0.2'
     aar "com.android.support:appcompat-v7:$SUPPORT_LIBS_VERSION"
     aar "com.android.support:recyclerview-v7:$SUPPORT_LIBS_VERSION"
 }
 
-sourceSets {
-    main {
-        java {
-            compileClasspath += configurations.aar
-        }
-    }
-}
 
 class ClassesJarArtifactTransform extends ArtifactTransform {
 
