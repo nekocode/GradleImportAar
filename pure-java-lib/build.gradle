@@ -10,7 +10,7 @@ import static org.gradle.api.internal.artifacts.ArtifactAttributes.ARTIFACT_FORM
 
 
 apply plugin: 'java-library'
-apply plugin: 'idea'
+
 
 configurations {
     aar {
@@ -18,14 +18,12 @@ configurations {
             attribute(ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
         }
 
+        // Add the aar inner jars to the compileClasspath
         sourceSets.main.compileClasspath += it
-    }
-}
 
-// Put our custom dependencies onto IDEA's PROVIDED scope
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.aar]
+        // Put our custom dependencies onto IDEA's PROVIDED scope
+        apply plugin: 'idea'
+        idea.module.scopes.PROVIDED.plus += [it]
     }
 }
 
@@ -70,6 +68,9 @@ dependencies {
 }
 
 
+/**
+ * An ArtifactTransform for renaming the classes.jar
+ */
 class ClassesJarArtifactTransform extends ArtifactTransform {
 
     @Override
