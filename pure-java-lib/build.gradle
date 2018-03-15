@@ -1,11 +1,17 @@
 import com.android.build.gradle.internal.dependency.ExtractAarTransform
 import com.android.build.gradle.internal.dependency.AarTransform
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType
+import com.google.common.collect.ImmutableList
+import org.gradle.api.artifacts.transform.ArtifactTransform
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
+
+import static org.gradle.api.internal.artifacts.ArtifactAttributes.ARTIFACT_FORMAT
 
 
 apply plugin: 'java-library'
+apply plugin: 'idea'
 
-def artifactType = Attribute.of('artifactType', String)
 
 dependencies {
     /*
@@ -22,34 +28,61 @@ dependencies {
     /*
       Aars
      */
+    def explodedAarType = ArtifactType.EXPLODED_AAR.getType()
     registerTransform {
-        from.attribute(artifactType, "aar")
-        to.attribute(artifactType, "aarExtracted")
+        from.attribute(ARTIFACT_FORMAT, AndroidArtifacts.TYPE_AAR)
+        to.attribute(ARTIFACT_FORMAT, explodedAarType)
         artifactTransform(ExtractAarTransform)
     }
 
     registerTransform {
-        from.attribute(artifactType, "aarExtracted")
-        to.attribute(artifactType, "jar")
+        from.attribute(ARTIFACT_FORMAT, explodedAarType)
+        to.attribute(ARTIFACT_FORMAT, "classes.jar")
         artifactTransform(AarTransform) { params(ArtifactType.JAR) }
+    }
+
+    registerTransform {
+        from.attribute(ARTIFACT_FORMAT, "classes.jar")
+        to.attribute(ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
+        artifactTransform(ClassesJarArtifactTransform)
     }
 
     configurations {
         aar {
             attributes {
-                attribute(artifactType, "jar")
+                attribute(ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
             }
+        }
+    }
+
+    // Put our custom dependencies onto IDEA's PROVIDED scope
+    idea {
+        module {
+            scopes.PROVIDED.plus += [configurations.aar]
         }
     }
 
     def SUPPORT_LIBS_VERSION = '27.0.2'
     aar "com.android.support:appcompat-v7:$SUPPORT_LIBS_VERSION"
     aar "com.android.support:recyclerview-v7:$SUPPORT_LIBS_VERSION"
+}
 
-    configurations.aar.files.collect {
-        /*
-          Import the jars extracted from the aar packages
-         */
-        compileOnly files(it.absolutePath)
+sourceSets {
+    main {
+        java {
+            compileClasspath += configurations.aar
+        }
+    }
+}
+
+class ClassesJarArtifactTransform extends ArtifactTransform {
+
+    @Override
+    List<File> transform(File file) {
+        final String[] names = file.getPath().split("/")
+        final String aarName = names[names.length - 4]
+        final File renamedJar = new File(getOutputDirectory(), aarName + ".jar")
+        renamedJar << file.bytes
+        return ImmutableList.of(renamedJar)
     }
 }
