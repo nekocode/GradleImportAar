@@ -15,7 +15,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:3.1.3"
-        classpath "com.github.nekocode:import-aar-plugin:{lastest-version}"
+        classpath "com.github.nekocode:Gradle-Import-Aar:{lastest-version}"
     }
 }
 ```
