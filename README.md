@@ -31,4 +31,4 @@ dependencies {
 }
 ```
 
-You can see the [pure-java-lib](pure-java-lib) module to learn how to use this plugin.
+You can see the [pure-java-lib](pure-java-lib) module to learn how to use this plugin. And this plugin has been used in the [Items](https://github.com/nekocode/Items) project, you can also reference it.
