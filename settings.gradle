@@ -1,1 +1,3 @@
-include ':pure-java-lib'
+include ':buildSrc', ':pure-java-lib'
+
+project(':buildSrc').buildFileName = 'buildSrc.gradle'
