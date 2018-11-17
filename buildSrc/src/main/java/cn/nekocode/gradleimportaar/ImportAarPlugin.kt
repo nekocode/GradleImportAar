@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.nekocode.gradleimportarr
+package cn.nekocode.gradleimportaar
 
 import com.android.build.gradle.api.AndroidBasePlugin
 import com.android.build.gradle.internal.dependency.AarTransform
