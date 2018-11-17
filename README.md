@@ -1,6 +1,6 @@
-With this plugin, you can add AARs (android libraries) to dependencies in a pure java gradle project, so that you can reference classes in them.
+With this plugin, you can import AARs (android libraries) to a pure java gradle project, so that you can reference classes in them.
 
-Usage:
+## Usage
 
 The ${lastest-version} of this plugin is [![Release](https://jitpack.io/v/nekocode/Gradle-Import-Aar.svg)](https://jitpack.io/#nekocode/Gradle-Import-Aar). Copy below code to the build.gradle of your java project:
 
