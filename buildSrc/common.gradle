@@ -1,13 +1,9 @@
-apply plugin: 'groovy'
+apply plugin: "kotlin"
 
-compileGroovy {
-    sourceCompatibility = "1.7"
-    targetCompatibility = "1.7"
-    options.encoding = "UTF-8"
+ext {
+    deps = [
+            dependencies.gradleApi(),
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
+            "com.android.tools.build:gradle:3.2.1",
+    ]
 }
-
-ext.allDependencies = [
-        dependencies.gradleApi(),
-        dependencies.localGroovy(),
-        "com.android.tools.build:gradle:3.1.3"
-]
