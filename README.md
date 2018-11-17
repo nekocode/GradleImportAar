@@ -1,12 +1,8 @@
-[![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Release](https://jitpack.io/v/nekocode/Gradle-Import-Aar.svg)](https://jitpack.io/#nekocode/Gradle-Import-Aar)
+With this plugin, you can add AARs (android libraries) to dependencies in a pure java gradle project, so that you can reference classes in them.
 
-In some cases, we need to reference some Android classes in a pure Java gradle module. If these classes are in a common jar, you can import them into your module directly. But if they are in a AAR package, there's no an official way to import them. You need to manually download the AAR package and unpack the `classes.jar` from it. And then import this `classes.jar` file directly.
+Usage:
 
-This plugin can finish above tasks automatically.
-
-## Import
-
-In your root `build.gradle`:
+The ${lastest-version} of this plugin is [![Release](https://jitpack.io/v/nekocode/Gradle-Import-Aar.svg)](https://jitpack.io/#nekocode/Gradle-Import-Aar). Copy below code to the build.gradle of your java project:
 
 ```gradle
 buildscript {
@@ -14,21 +10,19 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:3.1.3"
         classpath "com.github.nekocode:Gradle-Import-Aar:{lastest-version}"
     }
 }
+
+apply plugin: 'import-aar'
 ```
 
-In your pure java module's `build.gradle`:
+Now you can use the `aarCompileOnly` configuration to add aar dependencies:
 
 ```gradle
-apply plugin: 'java-library'
-apply plugin: 'import-aar'
-
 dependencies {
     aarCompileOnly "com.android.support:appcompat-v7:27.0.2"
 }
 ```
 
-You can see the [pure-java-lib](pure-java-lib) module to learn how to use this plugin. And this plugin has been used in the [Items](https://github.com/nekocode/Items) project, you can also reference it.
+There is a demo module [pure-java-lib](pure-java-lib) in this porject, you can check it to learn more details.
