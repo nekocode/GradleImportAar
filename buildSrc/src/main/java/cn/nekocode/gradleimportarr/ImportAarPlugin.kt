@@ -22,10 +22,12 @@ import com.android.build.gradle.internal.dependency.ExtractAarTransform
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.transform.ArtifactTransform
 import org.gradle.api.internal.artifacts.ArtifactAttributes.ARTIFACT_FORMAT
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 
@@ -79,7 +81,6 @@ class ImportAarPlugin : Plugin<Project> {
 
         val mainSourceSet = java.sourceSets.getByName("main")
         val aar = AndroidArtifacts.ArtifactType.AAR.type
-        val explodedAar = AndroidArtifacts.ArtifactType.EXPLODED_AAR.type
         val jar = AndroidArtifacts.ArtifactType.JAR.type
 
         // Create configuration
@@ -94,21 +95,33 @@ class ImportAarPlugin : Plugin<Project> {
         project.extensions.getByType(IdeaModel::class.java)
                 .module.scopes["PROVIDED"]!!["plus"]!!.add(config)
 
-        // Register aar transforms
+        // Register aar transform
         project.dependencies.run {
             registerTransform {
                 it.from.attribute(ARTIFACT_FORMAT, aar)
-                it.to.attribute(ARTIFACT_FORMAT, explodedAar)
-                it.artifactTransform(ExtractAarTransform::class.java)
-            }
-
-            registerTransform {
-                it.from.attribute(ARTIFACT_FORMAT, explodedAar)
                 it.to.attribute(ARTIFACT_FORMAT, jar)
-                it.artifactTransform(AarTransform::class.java) { ca ->
-                    ca.params(AndroidArtifacts.ArtifactType.JAR, false, false)
-                }
+                it.artifactTransform(AarJarArtifactTransform::class.java)
             }
+        }
+    }
+
+    class AarJarArtifactTransform : ArtifactTransform() {
+
+        override fun transform(input: File): MutableList<File> {
+            val extractTrans = ExtractAarTransform()
+            extractTrans.outputDirectory = File(outputDirectory, "exploded")
+            var files = extractTrans.transform(input)
+
+            val aarTrans = AarTransform(AndroidArtifacts.ArtifactType.JAR, false, false)
+            aarTrans.outputDirectory = outputDirectory
+            files = files.flatMap { aarTrans.transform(it) }
+
+            // Copy and rename the classes.jar
+            val jarFile = files.singleOrNull() ?: return arrayListOf()
+            val renamedJarFile = File(outputDirectory, "${input.nameWithoutExtension}.jar")
+            renamedJarFile.writeBytes(jarFile.readBytes())
+
+            return arrayListOf(renamedJarFile)
         }
     }
 }
