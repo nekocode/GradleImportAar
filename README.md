@@ -2,7 +2,7 @@ With this plugin, you can import AARs (android libraries) to a pure java gradle 
 
 ## Usage
 
-The ${lastest-version} of this plugin is [![Release](https://jitpack.io/v/nekocode/Gradle-Import-Aar.svg)](https://jitpack.io/#nekocode/Gradle-Import-Aar). Copy below code to the build.gradle of your java project:
+The `${lastest-version}` of this plugin is [![Release](https://jitpack.io/v/nekocode/Gradle-Import-Aar.svg)](https://jitpack.io/#nekocode/Gradle-Import-Aar). Copy below code to the build.gradle of your java project:
 
 ```gradle
 buildscript {
