@@ -78,15 +78,12 @@ class ImportAarPlugin : Plugin<Project> {
         }
 
         val mainSourceSet = java.sourceSets.getByName("main")
-        val compileOnlyConfig = project.configurations.getByName(
-                mainSourceSet.compileOnlyConfigurationName)
         val aar = AndroidArtifacts.ArtifactType.AAR.type
         val explodedAar = AndroidArtifacts.ArtifactType.EXPLODED_AAR.type
         val jar = AndroidArtifacts.ArtifactType.JAR.type
 
         // Create configuration
         val config = project.configurations.maybeCreate(CONFIG_NAME)
-        config.extendsFrom(compileOnlyConfig)
         config.attributes.attribute(ARTIFACT_FORMAT, jar)
 
         // Add aar's jars to compileClasspath
