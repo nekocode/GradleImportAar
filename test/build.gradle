@@ -1,0 +1,17 @@
+apply plugin: "kotlin"
+
+def srcProject = project(":buildSrc")
+
+srcProject.configurations.each { config ->
+    config.dependencies.each { dep ->
+        project.dependencies.add(config.name, dep)
+    }
+}
+
+dependencies {
+    testImplementation "junit:junit:4.12"
+}
+
+def srcJava = srcProject.convention.findPlugin(JavaPluginConvention)
+sourceSets.main.java.srcDirs += srcJava.sourceSets.main.java.srcDirs
+sourceSets.main.resources.srcDirs += srcJava.sourceSets.main.resources.srcDirs

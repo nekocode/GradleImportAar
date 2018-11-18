@@ -28,8 +28,6 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import java.io.File
-import java.net.URL
-import java.net.URLClassLoader
 
 /**
  * Debug: ./gradlew bD -Dorg.gradle.daemon=false -Dorg.gradle.debug=true
@@ -38,41 +36,10 @@ import java.net.URLClassLoader
 class ImportAarPlugin : Plugin<Project> {
 
     companion object {
-        const val ANDROID_PLUGIN_CLASSPATH = "com.android.build.gradle.api.AndroidBasePlugin"
         const val CONFIG_NAME = "aarCompileOnly"
     }
 
     override fun apply(project: Project) {
-        project.buildscript.run {
-            val classloader = Thread.currentThread().contextClassLoader as URLClassLoader
-
-            // Check if imported android plugin
-            try {
-                classloader.loadClass(ANDROID_PLUGIN_CLASSPATH)
-                return@run
-            } catch (ignored: ClassNotFoundException) {
-            }
-
-            // Define repository
-            repositories.google()
-
-            // Add android gradle plugin to dependencies
-            val config = configurations.maybeCreate("pluginClasspath")
-            config.defaultDependencies {
-                it.add(dependencies.create("com.android.tools.build:gradle:3.2.1"))
-            }
-
-            // Resolve depended jars and import them
-            config.forEach { file ->
-                URLClassLoader::class.java
-                        .getDeclaredMethod("addURL", URL::class.java)
-                        .run {
-                            isAccessible = true
-                            invoke(classloader, file.toURI().toURL())
-                        }
-            }
-        }
-
         // Check if this project is a pure java project
         val java = project.convention.findPlugin(JavaPluginConvention::class.java)
         if (java == null || project.plugins.findPlugin(AndroidBasePlugin::class.java) != null) {
