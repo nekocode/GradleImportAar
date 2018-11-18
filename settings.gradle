@@ -1,1 +1,1 @@
-include ':buildSrc', ':test', ':pure-java-lib'
+include ':buildSrc', ':test', ':pureJavaLib'

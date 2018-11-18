@@ -25,4 +25,4 @@ dependencies {
 }
 ```
 
-There is a demo module [pure-java-lib](pure-java-lib) in this porject, you can check it to learn more details.
+There is a demo module [pureJavaLib](pureJavaLib) in this porject, you can check it to learn more details.
