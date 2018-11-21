@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/nekocode/Gradle-Import-Aar.svg?branch=master)](https://travis-ci.com/nekocode/Gradle-Import-Aar) [![codecov](https://codecov.io/gh/nekocode/Gradle-Import-Aar/branch/master/graph/badge.svg)](https://codecov.io/gh/nekocode/Gradle-Import-Aar)
 
-With this plugin, you can import AARs (android libraries) to a pure java gradle project, so that you can reference classes in them.
+With this plugin, you can import AARs (android libraries) in a pure java gradle project, so that you can reference classes in them.
 
 ## Usage
 
