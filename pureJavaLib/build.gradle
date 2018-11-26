@@ -3,21 +3,11 @@ apply plugin: 'import-aar'
 
 
 dependencies {
-    /*
-      Android Jar
-     */
-    final String targetSdkVersion = '26'
-    final Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    final String sdkDir = properties.getProperty('sdk.dir')
+    // Android jar
+    compileOnly "com.google.android:android:4.1.1.4"
 
-    compileOnly files("${sdkDir}/platforms/android-${targetSdkVersion}/android.jar")
-
-
-    /*
-      Aars
-     */
+    // Aars
     final String SUPPORT_LIBS_VERSION = '27.0.2'
-    aarCompileOnly "com.android.support:appcompat-v7:$SUPPORT_LIBS_VERSION"
-    aarCompileOnly "com.android.support:recyclerview-v7:$SUPPORT_LIBS_VERSION"
+    compileOnlyAar "com.android.support:appcompat-v7:$SUPPORT_LIBS_VERSION"
+    compileOnlyAar "com.android.support:recyclerview-v7:$SUPPORT_LIBS_VERSION"
 }

@@ -50,16 +50,22 @@ class ImportAarPluginTest {
     fun testAddDependency() {
         project.plugins.apply(ImportAarPlugin::class.java)
 
-        val config = project.configurations.findByName("aarCompileOnly")
-        Assert.assertNotNull(config)
-        config!!
+        val aarConfig = project.configurations.findByName("compileOnlyAar")
+        Assert.assertNotNull(aarConfig)
+        aarConfig!!
 
-        project.dependencies.add("aarCompileOnly", "com.android.support:recyclerview-v7:27.0.2")
-        val jarFiles = config.files
-        Assert.assertTrue(jarFiles.isNotEmpty())
-
-        jarFiles.forEach {
+        project.dependencies.add("compileOnlyAar", "com.android.support:recyclerview-v7:27.0.2")
+        val aarJarFiles = aarConfig.files
+        Assert.assertTrue(aarJarFiles.isNotEmpty())
+        aarJarFiles.forEach {
             Assert.assertTrue(it.name.toLowerCase().endsWith(".jar"))
+        }
+
+        project.evaluate()
+
+        val aarJarPaths = aarJarFiles.map { it.absolutePath }
+        project.configurations.getByName("compileOnly").forEach {
+            Assert.assertTrue(it.absolutePath in aarJarPaths)
         }
     }
 }

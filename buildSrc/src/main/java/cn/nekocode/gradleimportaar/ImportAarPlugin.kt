@@ -30,13 +30,13 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import java.io.File
 
 /**
- * Debug: ./gradlew bD -Dorg.gradle.daemon=false -Dorg.gradle.debug=true
+ * Debug: ./gradlew :pJL:build -Dorg.gradle.daemon=false -Dorg.gradle.debug=true
  * @author nekocode (nekocode.cn@gmail.com)
  */
 class ImportAarPlugin : Plugin<Project> {
 
     companion object {
-        const val CONFIG_NAME = "aarCompileOnly"
+        const val CONFIG_NAME_POSTFIX = "Aar"
     }
 
     override fun apply(project: Project) {
@@ -46,21 +46,27 @@ class ImportAarPlugin : Plugin<Project> {
             throw IllegalStateException("The 'import-aar' plugin can only be used in a pure java module.")
         }
 
-        val mainSourceSet = java.sourceSets.getByName("main")
         val aar = AndroidArtifacts.ArtifactType.AAR.type
         val jar = AndroidArtifacts.ArtifactType.JAR.type
 
-        // Create configuration
-        val config = project.configurations.maybeCreate(CONFIG_NAME)
-        config.attributes.attribute(ARTIFACT_FORMAT, jar)
+        // Create aar configurations
+        val allConfigs = project.configurations.toList()
+        for (config in allConfigs) {
+            val aarConfig = project.configurations.maybeCreate(config.name + CONFIG_NAME_POSTFIX)
+            aarConfig.attributes.attribute(ARTIFACT_FORMAT, jar)
 
-        // Add aar's jars to compileClasspath
-        mainSourceSet.compileClasspath += config
+            // Add extracted jars to original configuration after project evaluating
+            project.afterEvaluate {
+                aarConfig.forEach { jarFile ->
+                    project.dependencies.add(config.name, project.files(jarFile))
+                }
+            }
 
-        // Add aar's jars to "PROVIDED" scope of idea
-        project.pluginManager.apply(IdeaPlugin::class.java)
-        project.extensions.getByType(IdeaModel::class.java)
-                .module.scopes["PROVIDED"]!!["plus"]!!.add(config)
+            // Tell Idea our aar configuration
+            project.pluginManager.apply(IdeaPlugin::class.java)
+            project.extensions.getByType(IdeaModel::class.java)
+                    .module.scopes["PROVIDED"]!!["plus"]!!.add(aarConfig)
+        }
 
         // Register aar transform
         project.dependencies.run {

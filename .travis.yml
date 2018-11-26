@@ -2,9 +2,6 @@ language: android
 jdk: oraclejdk8
 script: ./gradlew check
 
-before_script:
-  - echo sdk.dir=/usr/local/android-sdk > local.properties
-
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
