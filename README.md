@@ -21,11 +21,11 @@ buildscript {
 apply plugin: 'import-aar'
 ```
 
-Now you can use the `aarCompileOnly` configuration to add aar dependencies:
+Then the plugin will list your original configurations, and create corresponding new configurations naming `${originalName}Aar` (Such as `compileOnlyAar`) for importing AAR dependencies from maven. Take an example:
 
 ```gradle
 dependencies {
-    aarCompileOnly "com.android.support:appcompat-v7:27.0.2"
+    compileOnlyAar "com.android.support:appcompat-v7:27.0.2"
 }
 ```
 
