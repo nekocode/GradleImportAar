@@ -14,7 +14,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath "com.github.nekocode:Gradle-Import-Aar:{lastest-version}"
+        classpath "com.github.nekocode:GradleImportAar:{lastest-version}"
     }
 }
 
