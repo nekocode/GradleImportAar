@@ -6,19 +6,19 @@ With this plugin, you can import AARs (android libraries) in a pure java gradle 
 
 ## Usage
 
-The `${lastest-version}` of this plugin is [![Release](https://jitpack.io/v/nekocode/GradleImportAar.svg)](https://jitpack.io/#nekocode/GradleImportAar). Copy below code to the build.gradle of your java project:
+Replace the ${last-version} in below code to number [![Release](https://jitpack.io/v/nekocode/GradleImportAar.svg)](https://jitpack.io/#nekocode/GradleImportAar) and copy to the build.gradle of your java project:
 
 ```gradle
 buildscript {
     repositories {
-        maven { url 'https://jitpack.io' }
+        maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath "com.github.nekocode:GradleImportAar:{lastest-version}"
+        classpath "com.github.nekocode:GradleImportAar:{last-version}"
     }
 }
 
-apply plugin: 'import-aar'
+apply plugin: "import-aar"
 ```
 
 Then the plugin will list your original configurations, and create corresponding new configurations naming `${originalName}Aar` (Such as `compileOnlyAar`) for importing AAR dependencies from maven. Take an example:
